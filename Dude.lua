@@ -16,7 +16,13 @@ local rolesandcolors = {
     ['Liberator'] = Color3.fromRGB(0,0,255),
     ['Veteran'] = Color3.fromRGB(0,0,255),
     ['Bounty Hunter'] = Color3.fromRGB(0,0,255),
-	["Lookout"] = Color3.fromRGB(0, 0, 255)
+	['Lookout'] = Color3.fromRGB(0, 0, 255)
+	['Jailor'] = Color3.fromRGB(0, 0, 255)
+	['Enforcer'] = Color3.fromRGB(0, 0, 255)
+	['Distractor'] = Color3.fromRGB(0, 0, 255)
+	['Medium'] = Color3.fromRGB(0, 0, 255)
+	['Retributionist'] = Color3.fromRGB(0, 0, 255)
+	['Trapper'] = Color3.fromRGB(0, 0, 255)
 }
 local gunsandroles = {
     ["Shield"] = "Bodyguard",
@@ -54,31 +60,16 @@ wait()
 sendmsg("[CLI] Anticheat bypassed!")
 wait()
 sendmsg("[CLI] Snooping for roles..")
-for i,v in pairs(game:GetService("Workspace").Game:GetChildren()) do 
-    local folder = v.Name
-    v.ChildAdded:Connect(function(p)
+
+for i, v in pairs(game:GetService("Workspace").Game:GetChildren()) do
+  local folder = v.Name
+  v.ChildAdded:Connect(function(p)
     local plr = game.Players:FindFirstChild(p.Name)
-    if folder == "Mafia" or folder == "Vampire" or folder == "Coven" or folder == "Medium" then
-        if not plr:GetAttribute("NSXFA") then 
-  
-        plr:SetAttribute("NSXFA",folder)
-        sendmsg('[' .. 
-            plr:GetAttribute("NSXFA") ..
-            "] (" .. plr.PlayerData.DisplayName.Value  .. ")[" .. plr.PlayerData.Number.Value  ..  "] has been exposed \n")
-        end 
-    p.ChildAdded:Connect(function(ai)
-        if ai == "WerewolfVal" then 
-        if not plr:GetAttribute("NSXFA") then 
-        
-        plr:SetAttribute("NSXFA","Werewolf")
-        sendmsg('[' .. 
-            plr:GetAttribute("NSXFA") ..
-            "] (" .. plr.PlayerData.DisplayName.Value  .. ")[" .. plr.PlayerData.Number.Value  ..  "] has been exposed \n")
-        end 
-            end 
-        end)
-end
-    end)
+    if not plr:GetAttribute("NSXFA") then
+      plr:SetAttribute("NSXFA", folder)
+      sendmsg('[' .. plr:GetAttribute("NSXFA") .. "] (" .. plr.PlayerData.DisplayName.Value .. ")[" .. plr.PlayerData.Number.Value .. "] has been exposed \n")
+    end
+  end)
 end
 
 
