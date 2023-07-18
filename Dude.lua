@@ -1,119 +1,128 @@
--- made by KY#6446
-function sendmsg(msg)
-game.StarterGui:SetCore("ChatMakeSystemMessage", {
-Text = msg;
-})
-end 
-local rolesandcolors = {
-    ["Mafia"] = Color3.fromRGB(255,0,0), 
-    ["Vampire"] = Color3.fromRGB(0,255,0),
-    ["Coven"] = Color3.fromRGB(255,255,0),
-    ["Werewolf"] = Color3.fromRGB(64,64,64),
-    ['Bodyguard'] = Color3.fromRGB(0,0,255),
-    ['Medic'] = Color3.fromRGB(0,0,255),
-    ['Guardian'] = Color3.fromRGB(0,0,255),
-    ['Vigilante'] = Color3.fromRGB(0,0,255),
-    ['Liberator'] = Color3.fromRGB(0,0,255),
-    ['Veteran'] = Color3.fromRGB(0,0,255),
-    ['Bounty Hunter'] = Color3.fromRGB(0,0,255),
-	['Lookout'] = Color3.fromRGB(0, 0, 255)
-	['Jailor'] = Color3.fromRGB(0, 0, 255)
-	['Enforcer'] = Color3.fromRGB(0, 0, 255)
-	['Distractor'] = Color3.fromRGB(0, 0, 255)
-	['Medium'] = Color3.fromRGB(0, 0, 255)
-	['Retributionist'] = Color3.fromRGB(0, 0, 255)
-	['Trapper'] = Color3.fromRGB(0, 0, 255)
-}
-local gunsandroles = {
-    ["Shield"] = "Bodyguard",
-    ["Knife"] = "Killer",
-    ["GuardianSword"] = "Guardian",
-    ["Revolver"] = "Vigilante",
-    ["Katana"] = "Assassin",
-    ["ShieldK"] = "Liberator",
-    ["Medkit"] = "Medic",
-    ["Pistol"] = "Veteran",
-    ["Winchester"] = "Bounty Hunter",
+-- made by rang#2415 or https://v3rmillion.net/member.php?action=profile&uid=1906262
+local Config = {
+    Box               = false,
+    BoxOutline        = false,
+    BoxColor          = Color3.fromRGB(255,255,255),
+    BoxOutlineColor   = Color3.fromRGB(0,0,0),
+    HealthBar         = false,
+    HealthBarSide     = "Left", -- Left,Bottom,Right
+    Names             = false,
+    NamesOutline      = false,
+    NamesColor        = Color3.fromRGB(255,255,255),
+    NamesOutlineColor = Color3.fromRGB(0,0,0),
+    NamesFont         = 2, -- 0,1,2,3
+    NamesSize         = 13
 }
 
-function bypac()
-local ACRemote = game:GetService("ReplicatedStorage").Remotes.FinishAudio
-local ACBypass
-ACBypass = hookmetamethod(game, "__namecall", function(...)
-    local method = getnamecallmethod();
-    local args = ...;
+function CreateEsp(Player)
+    local Box, BoxOutline, Name, HealthBar, HealthBarOutline = Drawing.new("Square"), Drawing.new("Square"), Drawing.new("Text"), Drawing.new("Square"), Drawing.new("Square")
+    local Updater = game:GetService("RunService").RenderStepped:Connect(function()
+        if Player.Character ~= nil and Player.Character:FindFirstChild("Humanoid") ~= nil and Player.Character:FindFirstChild("HumanoidRootPart") ~= nil and Player.Character.Humanoid.Health > 0 and Player.Character:FindFirstChild("Head") ~= nil then
+            local Target2dPosition, IsVisible = workspace.CurrentCamera:WorldToViewportPoint(Player.Character.HumanoidRootPart.Position)
+            local scale_factor = 1 / (Target2dPosition.Z * math.tan(math.rad(workspace.CurrentCamera.FieldOfView * 0.5)) * 2) * 100
+            local width, height = math.floor(40 * scale_factor), math.floor(60 * scale_factor)
+            if Config.Box then
+                Box.Visible = IsVisible
+                Box.Color = Config.BoxColor
+                Box.Size = Vector2.new(width, height)
+                Box.Position = Vector2.new(Target2dPosition.X - Box.Size.X / 2, Target2dPosition.Y - Box.Size.Y / 2)
+                Box.Thickness = 1
+                Box.ZIndex = 69
+                if Config.BoxOutline then
+                    BoxOutline.Visible = IsVisible
+                    BoxOutline.Color = Config.BoxOutlineColor
+                    BoxOutline.Size = Vector2.new(width, height)
+                    BoxOutline.Position = Vector2.new(Target2dPosition.X - Box.Size.X / 2, Target2dPosition.Y - Box.Size.Y / 2)
+                    BoxOutline.Thickness = 3
+                    BoxOutline.ZIndex = 1
+                else
+                    BoxOutline.Visible = false
+                end
+            else
+                Box.Visible = false
+                BoxOutline.Visible = false
+            end
+            if Config.Names then
+                Name.Visible = IsVisible
+                Name.Color = Config.NamesColor
+                Name.Text = Player.DisplayName .. " " .. math.floor((workspace.CurrentCamera.CFrame.p - Player.Character.HumanoidRootPart.Position).magnitude) .. "m"
+                Name.Center = true
+                Name.Outline = Config.NamesOutline
+                Name.OutlineColor = Config.NamesOutlineColor
+                Name.Position = Vector2.new(Target2dPosition.X, Target2dPosition.Y - height * 0.5 + -15)
+                Name.Font = Config.NamesFont
+                Name.Size = Config.NamesSize
+            else
+                Name.Visible = false
+            end
+            if Config.HealthBar then
+                HealthBarOutline.Visible = IsVisible
+                HealthBarOutline.Color = Color3.fromRGB(0,0,0)
+                HealthBarOutline.Filled = true
+                HealthBarOutline.ZIndex = 1
+    
+                HealthBar.Visible = IsVisible
+                HealthBar.Color = Color3.fromRGB(255,0,0):lerp(Color3.fromRGB(0,255,0), Player.Character:FindFirstChild("Humanoid").Health/Player.Character:FindFirstChild("Humanoid").MaxHealth)
+                HealthBar.Thickness = 1
+                HealthBar.Filled = true
+                HealthBar.ZIndex = 69
+                if Config.HealthBarSide == "Left" then
+                    HealthBarOutline.Size = Vector2.new(2, height)
+                    HealthBarOutline.Position = Vector2.new(Target2dPosition.X - Box.Size.X / 2, Target2dPosition.Y - Box.Size.Y / 2) + Vector2.new(-3, 0)
+                    
+                    HealthBar.Size = Vector2.new(1, -(HealthBarOutline.Size.Y - 2) * (Player.Character:FindFirstChild("Humanoid").Health/Player.Character:FindFirstChild("Humanoid").MaxHealth))
+                    HealthBar.Position = HealthBarOutline.Position + Vector2.new(1, -1 + HealthBarOutline.Size.Y)
+                elseif Config.HealthBarSide == "Bottom" then
+                    HealthBarOutline.Size = Vector2.new(width, 3)
+                    HealthBarOutline.Position = Vector2.new(Target2dPosition.X - Box.Size.X / 2, Target2dPosition.Y - Box.Size.Y / 2) + Vector2.new(0, height + 2)
 
-    if not checkcaller() then
-        if typeof(self) == "Instance" and self == ACRemote and method == "FireServer" then
-            return wait(9e9);
+                    HealthBar.Size = Vector2.new((HealthBarOutline.Size.X - 2) * (Player.Character:FindFirstChild("Humanoid").Health/Player.Character:FindFirstChild("Humanoid").MaxHealth), 1)
+                    HealthBar.Position = HealthBarOutline.Position + Vector2.new(1, -1 + HealthBarOutline.Size.Y)
+                elseif Config.HealthBarSide == "Right" then
+                    HealthBarOutline.Size = Vector2.new(2, height)
+                    HealthBarOutline.Position = Vector2.new(Target2dPosition.X - Box.Size.X / 2, Target2dPosition.Y - Box.Size.Y / 2) + Vector2.new(width + 1, 0)
+                    
+                    HealthBar.Size = Vector2.new(1, -(HealthBarOutline.Size.Y - 2) * (Player.Character:FindFirstChild("Humanoid").Health/Player.Character:FindFirstChild("Humanoid").MaxHealth))
+                    HealthBar.Position = HealthBarOutline.Position + Vector2.new(1, -1 + HealthBarOutline.Size.Y)
+                end
+            else
+                HealthBar.Visible = false
+                HealthBarOutline.Visible = false
+            end
+        else
+            Box.Visible = false
+            BoxOutline.Visible = false
+            Name.Visible = false
+            HealthBar.Visible = false
+            HealthBarOutline.Visible = false
+            if not Player then
+                Box:Remove()
+                BoxOutline:Remove()
+                Name:Remove()
+                HealthBar:Remove()
+                HealthBarOutline:Remove()
+                Updater:Disconnect()
+            end
         end
+    end)
+end
+
+for _, v in pairs(game:GetService("Players"):GetPlayers()) do
+    if v ~= game:GetService("Players").LocalPlayer then
+        CreateEsp(v)
+        v.CharacterAdded:Connect(function()
+            CreateEsp(v)
+        end)
     end
-
-    return ACBypass(...)
-end)
 end
-sendmsg("BOXTON CLI")
-sendmsg("[CLI] Bypassing anticheat")
-wait(1)
-bypac()
-wait()
-sendmsg("[CLI] Anticheat bypassed!")
-wait()
-sendmsg("[CLI] Snooping for roles..")
 
-for i, v in pairs(game:GetService("Workspace").Game:GetChildren()) do
-  local folder = v.Name
-  v.ChildAdded:Connect(function(p)
-    local plr = game.Players:FindFirstChild(p.Name)
-    if not plr:GetAttribute("NSXFA") then
-      plr:SetAttribute("NSXFA", folder)
-      sendmsg('[' .. plr:GetAttribute("NSXFA") .. "] (" .. plr.PlayerData.DisplayName.Value .. ")[" .. plr.PlayerData.Number.Value .. "] has been exposed \n")
+game:GetService("Players").PlayerAdded:Connect(function(v)
+    if v ~= game:GetService("Players").LocalPlayer then
+        CreateEsp(v)
+        v.CharacterAdded:Connect(function()
+            CreateEsp(v)
+        end)
     end
-  end)
-end
-
-
-game.Players.DescendantAdded:Connect(function(t)
-    if t:IsA("Tool") then
-        local plr = t.Parent.Parent
-        local tool = t
-        if not game.Players:FindFirstChild(t.Parent.Parent.Name):GetAttribute("NSXFA") then 
-        if gunsandroles[t.Name] ~= nil then
-             plr:SetAttribute("NSXFA",gunsandroles[t.Name])  
-         end 
-          
-            wait()
-        sendmsg("[" .. 
-            (plr:GetAttribute("NSXFA") or "Unknown") .. 
-            "] (" .. plr.PlayerData.DisplayName.Value .. ")[" .. plr.PlayerData.Number.Value  ..  "] was found with " .. tool.Name .. '\n')
-        end 
-    end 
 end)
-for i,plr in pairs(game.Players:GetChildren()) do 
-local v = plr
-if plr:GetAttribute("NSXFA") then 
-       sendmsg('[' .. 
-            plr:GetAttribute("NSXFA") ..
-            "] (" .. plr.PlayerData.DisplayName.Value  .. ")[" .. plr.PlayerData.Number.Value  ..  "] has been exposed \n")
-end 
-  spawn(function()
-      while wait() do 
-          local charr = v.Character or v.CharacterAdded:Wait()
 
-local oh = charr:FindFirstChild("Overhead",true)
-if oh then 
-    oh.AlwaysOnTop = true
-    if v == game.Players.LocalPlayer then 
-        oh.PlayerName.Text = '[' .. plr.PlayerData.Number.Value .. '] ' .. plr.PlayerData.DisplayName.Value
-        oh.PlayerName.TextColor3 = Color3.fromRGB(255,80,192)
-    elseif v:GetAttribute("NSXFA")~= nil and  rolesandcolors[v:GetAttribute("NSXFA")] ~= nil then 
-        oh.PlayerName.Text = '[' .. plr.PlayerData.Number.Value .. '] ' .. plr.PlayerData.DisplayName.Value
-        oh.PlayerName.TextColor3 = rolesandcolors[v:GetAttribute("NSXFA")]
-    else
-         oh.PlayerName.Text = '[' .. plr.PlayerData.Number.Value .. '] ' .. plr.PlayerData.DisplayName.Value
-        oh.PlayerName.TextColor3 = Color3.fromRGB(255,255,255)
-    end 
-end 
-          end 
-      end)
-end
+return Config
