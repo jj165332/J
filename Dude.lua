@@ -28,8 +28,8 @@ function CreateEsp(Player)
         if Config.Names then
             -- Update the NameOutline position along with the display name
             NameOutline.Text = Player.DisplayName -- Set the text of the NameOutline to the player's display name
-            NameOutline.Size = Config.TextSize -- Set the font size of the NameOutline
-            NameOutline.Color = Config.TextColor -- Set the color of the NameOutline
+            NameOutline.Size = 15 -- Set the font size of the NameOutline (adjust as needed)
+            NameOutline.Color = Color3.fromRGB(255, 255, 255) -- Set the color of the NameOutline (white in this example)
             NameOutline.Position = Vector2.new(Player.Character.Head.Position.X, Player.Character.Head.Position.Y) -- Set the position of the NameOutline
 
             -- Rest of your existing Name update logic...
