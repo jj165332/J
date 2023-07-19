@@ -27,11 +27,13 @@ function CreateEsp(Player)
 
         if Config.Names then
             -- Update the NameOutline position along with the display name
-            NameOutline.Position = Player.DisplayName  -- Corrected line to use DisplayName
+            NameOutline.Text = Player.DisplayName -- Set the text of the NameOutline to the player's display name
+            NameOutline.Size = Config.TextSize -- Set the font size of the NameOutline
+            NameOutline.Color = Config.TextColor -- Set the color of the NameOutline
+            NameOutline.Position = Vector2.new(Player.Character.Head.Position.X, Player.Character.Head.Position.Y) -- Set the position of the NameOutline
 
             -- Rest of your existing Name update logic...
         else
-            Name.Visible = false
             NameOutline.Visible = false
             PlayerData.Visible = false
         end
@@ -47,7 +49,6 @@ function CreateEsp(Player)
 
             -- Rest of your existing Box update logic...
         else
-            Box.Visible = false
             BoxOutline.Visible = false
         end
     end)
