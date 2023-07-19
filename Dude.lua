@@ -1,108 +1,54 @@
--- made by rang#2415 or https://v3rmillion.net/member.php?action=profile&uid=1906262
 local Config = {
-    Box               = false,
-    BoxOutline        = false,
-    BoxColor          = Color3.fromRGB(255,255,255),
-    BoxOutlineColor   = Color3.fromRGB(0,0,0),
-    HealthBar         = false,
-    HealthBarSide     = "Left", -- Left,Bottom,Right
-    Names             = false,
-    NamesOutline      = false,
-    NamesColor        = Color3.fromRGB(255,255,255),
-    NamesOutlineColor = Color3.fromRGB(0,0,0),
-    NamesFont         = 2, -- 0,1,2,3
-    NamesSize         = 13
+    -- Your existing configuration here...
 }
 
-function CreateEsp(Player)
-    local Box, BoxOutline, Name, HealthBar, HealthBarOutline = Drawing.new("Square"), Drawing.new("Square"), Drawing.new("Text"), Drawing.new("Square"), Drawing.new("Square")
-    local Updater = game:GetService("RunService").RenderStepped:Connect(function()
-        if Player.Character ~= nil and Player.Character:FindFirstChild("Humanoid") ~= nil and Player.Character:FindFirstChild("HumanoidRootPart") ~= nil and Player.Character.Humanoid.Health > 0 and Player.Character:FindFirstChild("Head") ~= nil then
-            local Target2dPosition, IsVisible = workspace.CurrentCamera:WorldToViewportPoint(Player.Character.HumanoidRootPart.Position)
-            local scale_factor = 1 / (Target2dPosition.Z * math.tan(math.rad(workspace.CurrentCamera.FieldOfView * 0.5)) * 2) * 100
-            local width, height = math.floor(40 * scale_factor), math.floor(60 * scale_factor)
-            if Config.Box then
-                Box.Visible = IsVisible
-                Box.Color = Config.BoxColor
-                Box.Size = Vector2.new(width, height)
-                Box.Position = Vector2.new(Target2dPosition.X - Box.Size.X / 2, Target2dPosition.Y - Box.Size.Y / 2)
-                Box.Thickness = 1
-                Box.ZIndex = 69
-                if Config.BoxOutline then
-                    BoxOutline.Visible = IsVisible
-                    BoxOutline.Color = Config.BoxOutlineColor
-                    BoxOutline.Size = Vector2.new(width, height)
-                    BoxOutline.Position = Vector2.new(Target2dPosition.X - Box.Size.X / 2, Target2dPosition.Y - Box.Size.Y / 2)
-                    BoxOutline.Thickness = 3
-                    BoxOutline.ZIndex = 1
-                else
-                    BoxOutline.Visible = false
-                end
-            else
-                Box.Visible = false
-                BoxOutline.Visible = false
-            end
-            if Config.Names then
-                Name.Visible = IsVisible
-                Name.Color = Config.NamesColor
-                Name.Text = Player.DisplayName .. " " .. math.floor((workspace.CurrentCamera.CFrame.p - Player.Character.HumanoidRootPart.Position).magnitude) .. "m"
-                Name.Center = true
-                Name.Outline = Config.NamesOutline
-                Name.OutlineColor = Config.NamesOutlineColor
-                Name.Position = Vector2.new(Target2dPosition.X, Target2dPosition.Y - height * 0.5 + -15)
-                Name.Font = Config.NamesFont
-                Name.Size = Config.NamesSize
-            else
-                Name.Visible = false
-            end
-            if Config.HealthBar then
-                HealthBarOutline.Visible = IsVisible
-                HealthBarOutline.Color = Color3.fromRGB(0,0,0)
-                HealthBarOutline.Filled = true
-                HealthBarOutline.ZIndex = 1
-    
-                HealthBar.Visible = IsVisible
-                HealthBar.Color = Color3.fromRGB(255,0,0):lerp(Color3.fromRGB(0,255,0), Player.Character:FindFirstChild("Humanoid").Health/Player.Character:FindFirstChild("Humanoid").MaxHealth)
-                HealthBar.Thickness = 1
-                HealthBar.Filled = true
-                HealthBar.ZIndex = 69
-                if Config.HealthBarSide == "Left" then
-                    HealthBarOutline.Size = Vector2.new(2, height)
-                    HealthBarOutline.Position = Vector2.new(Target2dPosition.X - Box.Size.X / 2, Target2dPosition.Y - Box.Size.Y / 2) + Vector2.new(-3, 0)
-                    
-                    HealthBar.Size = Vector2.new(1, -(HealthBarOutline.Size.Y - 2) * (Player.Character:FindFirstChild("Humanoid").Health/Player.Character:FindFirstChild("Humanoid").MaxHealth))
-                    HealthBar.Position = HealthBarOutline.Position + Vector2.new(1, -1 + HealthBarOutline.Size.Y)
-                elseif Config.HealthBarSide == "Bottom" then
-                    HealthBarOutline.Size = Vector2.new(width, 3)
-                    HealthBarOutline.Position = Vector2.new(Target2dPosition.X - Box.Size.X / 2, Target2dPosition.Y - Box.Size.Y / 2) + Vector2.new(0, height + 2)
+local PlayerNames = {}
 
-                    HealthBar.Size = Vector2.new((HealthBarOutline.Size.X - 2) * (Player.Character:FindFirstChild("Humanoid").Health/Player.Character:FindFirstChild("Humanoid").MaxHealth), 1)
-                    HealthBar.Position = HealthBarOutline.Position + Vector2.new(1, -1 + HealthBarOutline.Size.Y)
-                elseif Config.HealthBarSide == "Right" then
-                    HealthBarOutline.Size = Vector2.new(2, height)
-                    HealthBarOutline.Position = Vector2.new(Target2dPosition.X - Box.Size.X / 2, Target2dPosition.Y - Box.Size.Y / 2) + Vector2.new(width + 1, 0)
-                    
-                    HealthBar.Size = Vector2.new(1, -(HealthBarOutline.Size.Y - 2) * (Player.Character:FindFirstChild("Humanoid").Health/Player.Character:FindFirstChild("Humanoid").MaxHealth))
-                    HealthBar.Position = HealthBarOutline.Position + Vector2.new(1, -1 + HealthBarOutline.Size.Y)
-                end
-            else
-                HealthBar.Visible = false
-                HealthBarOutline.Visible = false
-            end
+function GetNonOverlappingYPosition(Target2dPosition, currentIndex)
+    -- Your existing GetNonOverlappingYPosition function...
+end
+
+function CreateEsp(Player)
+    -- Your existing CreateEsp function here...
+
+    local BoxOutline, NameOutline = Drawing.new("Square"), Drawing.new("Text")
+
+    local PlayerData = {
+        Player = Player,
+        BoxOutline = BoxOutline,
+        NameOutline = NameOutline,
+        -- Rest of your existing PlayerData...
+    }
+
+    table.insert(PlayerNames, PlayerData)
+
+    local Updater = game:GetService("RunService").RenderStepped:Connect(function()
+        -- Your existing update logic here...
+
+        if Config.Names then
+            -- Update the NameOutline position along with the name
+            NameOutline.Position = Name.Position
+
+            -- Rest of your existing Name update logic...
+        else
+            Name.Visible = false
+            NameOutline.Visible = false
+            PlayerData.Visible = false
+        end
+
+        if Config.Box then
+            -- Update the BoxOutline position and size along with the box
+            BoxOutline.Visible = IsVisible
+            BoxOutline.Color = Config.BoxOutlineColor
+            BoxOutline.Size = Vector2.new(width, height)
+            BoxOutline.Position = Vector2.new(Target2dPosition.X - Box.Size.X / 2, Target2dPosition.Y - Box.Size.Y / 2)
+            BoxOutline.Thickness = 2  -- Adjust the outline thickness as needed
+            BoxOutline.Transparency = 1  -- Set outline transparency to 1 (fully visible)
+
+            -- Rest of your existing Box update logic...
         else
             Box.Visible = false
             BoxOutline.Visible = false
-            Name.Visible = false
-            HealthBar.Visible = false
-            HealthBarOutline.Visible = false
-            if not Player then
-                Box:Remove()
-                BoxOutline:Remove()
-                Name:Remove()
-                HealthBar:Remove()
-                HealthBarOutline:Remove()
-                Updater:Disconnect()
-            end
         end
     end)
 end
