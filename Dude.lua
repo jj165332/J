@@ -26,8 +26,8 @@ function CreateEsp(Player)
         -- Your existing update logic here...
 
         if Config.Names then
-            -- Update the NameOutline position along with the name
-            NameOutline.Position = Name.Position
+            -- Update the NameOutline position along with the display name
+            NameOutline.Position = Player.DisplayName  -- Corrected line to use DisplayName
 
             -- Rest of your existing Name update logic...
         else
