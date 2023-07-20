@@ -1,8 +1,8 @@
 -- Made by rang#2415 or https://v3rmillion.net/member.php?action=profile&uid=1906262
 
 local Config = {
-    Box               = false,
-    BoxOutline        = false,
+    Box               = true,
+    BoxOutline        = true,
     BoxColor          = Color3.fromRGB(255, 255, 255),
     BoxOutlineColor   = Color3.fromRGB(0, 0, 0),
     Names             = true, -- Set this to true to show display names instead of usernames
@@ -34,13 +34,29 @@ function CreateEsp(Player)
             local Target2dPosition, IsVisible = workspace.CurrentCamera:WorldToViewportPoint(Player.Character.HumanoidRootPart.Position)
             local scale_factor = 1 / (Target2dPosition.Z * math.tan(math.rad(workspace.CurrentCamera.FieldOfView * 0.5)) * 2) * 100
             local width, height = math.floor(40 * scale_factor), math.floor(60 * scale_factor)
+
             if Config.Box then
-                -- Box drawing code here
-                -- ... (keep the rest of your Box drawing code)
+                Box.Visible = IsVisible
+                Box.Color = Config.BoxColor
+                Box.Size = Vector2.new(width, height)
+                Box.Position = Vector2.new(Target2dPosition.X - Box.Size.X / 2, Target2dPosition.Y - Box.Size.Y / 2)
+                Box.Thickness = 1
+                Box.ZIndex = 1
             else
                 Box.Visible = false
+            end
+
+            if Config.BoxOutline then
+                BoxOutline.Visible = IsVisible
+                BoxOutline.Color = Config.BoxOutlineColor
+                BoxOutline.Size = Vector2.new(width, height)
+                BoxOutline.Position = Vector2.new(Target2dPosition.X - Box.Size.X / 2, Target2dPosition.Y - Box.Size.Y / 2)
+                BoxOutline.Thickness = 3
+                BoxOutline.ZIndex = 1
+            else
                 BoxOutline.Visible = false
             end
+
             if Config.Names then
                 Name.Visible = IsVisible
                 Name.Color = Config.NamesColor
