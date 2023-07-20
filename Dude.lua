@@ -1,38 +1,41 @@
+-- Made by rang#2415 or https://v3rmillion.net/member.php?action=profile&uid=1906262
+
 local Config = {
-    -- Your existing configuration here...
+    -- ... (keep the rest of your configuration settings)
+    Names = true, -- Set this to true to show display names instead of usernames
 }
 
-local PlayerNames = {}
-
-function GetNonOverlappingYPosition(Target2dPosition, currentIndex)
-    -- Your existing GetNonOverlappingYPosition function...
-end
-
 function CreateEsp(Player)
-    -- Your existing CreateEsp function here...
-
-    local NameOutline = Drawing.new("Text")
-
-    local PlayerData = {
-        Player = Player,
-        NameOutline = NameOutline,
-        -- Rest of your existing PlayerData...
-    }
-
-    table.insert(PlayerNames, PlayerData)
-
+    local Box, BoxOutline, Name, HealthBar, HealthBarOutline = Drawing.new("Square"), Drawing.new("Square"), Drawing.new("Text"), Drawing.new("Square"), Drawing.new("Square")
     local Updater = game:GetService("RunService").RenderStepped:Connect(function()
-        -- Your existing update logic here...
-
-        if Config.Names then
-            -- Update the NameOutline position along with the display name
-            NameOutline.Text = Player.DisplayName -- Set the text of the NameOutline to the player's display name
-            NameOutline.Position = Vector2.new(Player.Character.Head.Position.X, Player.Character.Head.Position.Y) -- Set the position of the NameOutline
-
-            -- Rest of your existing Name update logic...
+        if Player.Character ~= nil and Player.Character:FindFirstChild("Humanoid") ~= nil and Player.Character:FindFirstChild("HumanoidRootPart") ~= nil and Player.Character.Humanoid.Health > 0 and Player.Character:FindFirstChild("Head") ~= nil then
+            local Target2dPosition, IsVisible = workspace.CurrentCamera:WorldToViewportPoint(Player.Character.HumanoidRootPart.Position)
+            local scale_factor = 1 / (Target2dPosition.Z * math.tan(math.rad(workspace.CurrentCamera.FieldOfView * 0.5)) * 2) * 100
+            local width, height = math.floor(40 * scale_factor), math.floor(60 * scale_factor)
+            if Config.Box then
+                -- ... (keep the rest of your Box drawing code)
+            else
+                Box.Visible = false
+                BoxOutline.Visible = false
+            end
+            if Config.Names then
+                Name.Visible = IsVisible
+                Name.Color = Config.NamesColor
+                Name.Text = Player.DisplayName .. " " .. math.floor((workspace.CurrentCamera.CFrame.p - Player.Character.HumanoidRootPart.Position).magnitude) .. "m"
+                Name.Center = true
+                Name.Outline = Config.NamesOutline
+                Name.OutlineColor = Config.NamesOutlineColor
+                -- Adjust the vertical position of the name based on distance from camera
+                local yOffset = math.clamp(-15 + 0.1 * (100 / (Target2dPosition.Z + 0.1)), -30, -15)
+                Name.Position = Vector2.new(Target2dPosition.X, Target2dPosition.Y - height * 0.5 + yOffset)
+                Name.Font = Config.NamesFont
+                Name.Size = Config.NamesSize
+            else
+                Name.Visible = false
+            end
+            -- ... (keep the rest of your HealthBar drawing code)
         else
-            NameOutline.Visible = false
-            PlayerData.Visible = false
+            -- ... (keep the rest of your visibility handling code)
         end
     end)
 end
