@@ -28,16 +28,17 @@ function CreateEsp(Player)
                 Box.Position = Vector2.new(Target2dPosition.X - Box.Size.X / 2,Target2dPosition.Y - Box.Size.Y / 2)
                 Box.Thickness = 1
                 Box.ZIndex = 69
-                if Config.BoxOutline then
-                    BoxOutline.Visible = IsVisible
-                    BoxOutline.Color = Config.BoxOutlineColor
-                    BoxOutline.Size = Vector2.new(width,height)
-                    BoxOutline.Position = Vector2.new(Target2dPosition.X - Box.Size.X / 2,Target2dPosition.Y - Box.Size.Y / 2)
-                    BoxOutline.Thickness = 3
-                    BoxOutline.ZIndex = 1
-                else
-                    BoxOutline.Visible = false
-                end
+               if Config.BoxOutline then
+    BoxOutline.Visible = IsVisible
+    BoxOutline.Color = Config.BoxOutlineColor
+    BoxOutline.Size = Vector2.new(width, height)
+    BoxOutline.Position = Vector2.new(Target2dPosition.X - Box.Size.X / 2 - 1, Target2dPosition.Y - Box.Size.Y / 2 - 1) -- Subtract 1 from both X and Y positions
+    BoxOutline.Thickness = 3
+    BoxOutline.ZIndex = 1
+else
+    BoxOutline.Visible = false
+end
+
             else
                 Box.Visible = false
                 BoxOutline.Visible = false
