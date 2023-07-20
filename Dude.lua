@@ -9,7 +9,7 @@ local Config = {
     NamesOutline      = false,
     NamesColor        = Color3.fromRGB(255, 255, 255),
     NamesOutlineColor = Color3.fromRGB(0, 0, 0),
-    NamesFont         = 2, -- 0, 1, 2, 3
+    NamesFont         = Enum.Font.SourceSans, -- You can change this to a different Roblox font
     NamesSize         = 13
 }
 
@@ -31,14 +31,17 @@ function CreateEsp(Player)
         debounce = true
 
         if Player.Character and Player.Character:FindFirstChild("Humanoid") and Player.Character.Humanoid.Health > 0 and Player.Character:FindFirstChild("Head") then
-            local Target2dPosition, IsVisible = workspace.CurrentCamera:WorldToViewportPoint(Player.Character.HumanoidRootPart.Position)
-            local scale_factor = 1 / (Target2dPosition.Z * math.tan(math.rad(workspace.CurrentCamera.FieldOfView * 0.5)) * 2) * 100
-            local width, height = math.floor(40 * scale_factor), math.floor(60 * scale_factor)
+            local Target2dPosition, IsVisible = workspace.CurrentCamera:WorldToViewportPoint(Player.Character.Head.Position)
+            if not IsVisible then
+                RemoveEsp()
+                debounce = false
+                return
+            end
 
             if Config.Box then
-                Box.Visible = IsVisible
+                Box.Visible = true
                 Box.Color = Config.BoxColor
-                Box.Size = Vector2.new(width, height)
+                Box.Size = Vector2.new(40, 80)
                 Box.Position = Vector2.new(Target2dPosition.X - Box.Size.X / 2, Target2dPosition.Y - Box.Size.Y / 2)
                 Box.Thickness = 1
                 Box.ZIndex = 1
@@ -47,9 +50,9 @@ function CreateEsp(Player)
             end
 
             if Config.BoxOutline then
-                BoxOutline.Visible = IsVisible
+                BoxOutline.Visible = true
                 BoxOutline.Color = Config.BoxOutlineColor
-                BoxOutline.Size = Vector2.new(width, height)
+                BoxOutline.Size = Vector2.new(40, 80)
                 BoxOutline.Position = Vector2.new(Target2dPosition.X - Box.Size.X / 2, Target2dPosition.Y - Box.Size.Y / 2)
                 BoxOutline.Thickness = 3
                 BoxOutline.ZIndex = 1
@@ -58,16 +61,15 @@ function CreateEsp(Player)
             end
 
             if Config.Names then
-                Name.Visible = IsVisible
+                Name.Visible = true
                 Name.Color = Config.NamesColor
-                Name.Text = Player.DisplayName .. " " .. math.floor((workspace.CurrentCamera.CFrame.p - Player.Character.HumanoidRootPart.Position).magnitude) .. "m"
+                Name.Text = Player.DisplayName
+                Name.Position = Vector2.new(Target2dPosition.X, Target2dPosition.Y + 40)
+                Name.Font = Config.NamesFont
+                Name.Size = Config.NamesSize
                 Name.Center = true
                 Name.Outline = Config.NamesOutline
                 Name.OutlineColor = Config.NamesOutlineColor
-                local yOffset = math.clamp(-15 + 0.1 * (100 / (Target2dPosition.Z + 0.1)), -30, -15)
-                Name.Position = Vector2.new(Target2dPosition.X, Target2dPosition.Y - height * 0.5 + yOffset)
-                Name.Font = Config.NamesFont
-                Name.Size = Config.NamesSize
             else
                 Name.Visible = false
             end
